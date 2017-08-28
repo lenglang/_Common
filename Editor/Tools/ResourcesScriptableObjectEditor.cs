@@ -70,13 +70,12 @@ namespace WZK
                 if (objList[i]._assetPath == "" && objList[i]._object) objList[i]._assetPath = objList[i]._object.name;
                 if (_isDelete) objList.RemoveAt(i);
             }
-
             if (Event.current.type == EventType.DragExited)
             {
+                
                 _directionPath = Application.dataPath;
                 _directionPath = _directionPath.Substring(0, _directionPath.LastIndexOf("/") + 1) + DragAndDrop.paths[0];
-                string[] strs = _directionPath.Split('.');
-                if (strs.Length == 1 && Directory.Exists(_directionPath))
+                if (Directory.Exists(_directionPath))
                 {
                     DirectoryInfo direction = new DirectoryInfo(_directionPath);
                     FileInfo[] files = direction.GetFiles("*", SearchOption.AllDirectories);
