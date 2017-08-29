@@ -3,7 +3,10 @@ using WZK;
 
 public class MyResources:Singleton<MyResources>
 {
-    
+    private void Start()
+    {
+        DontDestroyOnLoad(gameObject);
+    }
     public ResourcesScriptableObject _resourcesScriptableObject;
     public T Load<T>(string path) where T : Object
     {
