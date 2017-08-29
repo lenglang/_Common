@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using UnityEditor;
+using UnityEditor.SceneManagement;
 using UnityEngine;
 
 namespace WZK
@@ -72,26 +73,32 @@ namespace WZK
             }
             if (Event.current.type == EventType.DragExited)
             {
-                
-                _directionPath = Application.dataPath;
-                _directionPath = _directionPath.Substring(0, _directionPath.LastIndexOf("/") + 1) + DragAndDrop.paths[0];
-                if (Directory.Exists(_directionPath))
+                if (DragAndDrop.objectReferences[0].GetType() == typeof(AudioClip)|| DragAndDrop.objectReferences[0].GetType() == typeof(GameObject))
                 {
-                    DirectoryInfo direction = new DirectoryInfo(_directionPath);
-                    FileInfo[] files = direction.GetFiles("*", SearchOption.AllDirectories);
-                    for (int i = 0; i < files.Length; i++)
+                    AddObject(objList,DragAndDrop.objectReferences[0], DragAndDrop.paths[0]);
+                }
+                else
+                {
+                    _directionPath = Application.dataPath;
+                    _directionPath = _directionPath.Substring(0, _directionPath.LastIndexOf("/") + 1) + DragAndDrop.paths[0];
+                    if (Directory.Exists(_directionPath))
                     {
-                        if (_resourcesScriptableObject._choseExtensionList.Count == 0 && _extensionList.Contains(Path.GetExtension(files[i].FullName)) == false)
+                        DirectoryInfo direction = new DirectoryInfo(_directionPath);
+                        FileInfo[] files = direction.GetFiles("*", SearchOption.AllDirectories);
+                        for (int i = 0; i < files.Length; i++)
                         {
-                            continue;
+                            if (_resourcesScriptableObject._choseExtensionList.Count == 0 && _extensionList.Contains(Path.GetExtension(files[i].FullName)) == false)
+                            {
+                                continue;
+                            }
+                            else if (_resourcesScriptableObject._choseExtensionList.Count > 0 && _resourcesScriptableObject._choseExtensionList.Contains(Path.GetExtension(files[i].FullName)) == false)
+                            {
+                                continue;
+                            }
+                            _fileAssetPath = files[i].DirectoryName;
+                            _fileAssetPath = _fileAssetPath.Substring(_fileAssetPath.IndexOf("Assets")) + "/" + files[i].Name;
+                            AddObject(objList, AssetDatabase.LoadAssetAtPath<Object>(_fileAssetPath), _fileAssetPath);
                         }
-                        else if (_resourcesScriptableObject._choseExtensionList.Count > 0 && _resourcesScriptableObject._choseExtensionList.Contains(Path.GetExtension(files[i].FullName)) == false)
-                        {
-                            continue;
-                        }
-                        _fileAssetPath = files[i].DirectoryName;
-                        _fileAssetPath = _fileAssetPath.Substring(_fileAssetPath.IndexOf("Assets")) + "/" + files[i].Name;
-                        AddObject(objList, AssetDatabase.LoadAssetAtPath<Object>(_fileAssetPath), _fileAssetPath);
                     }
                 }
             }
@@ -122,5 +129,19 @@ namespace WZK
             assetPath=assetPath.Replace("\\","/");
             if (_isExist == false) objList.Add(new ResourcesScriptableObject.Config(obj, assetPath));
         }
+
+        [MenuItem("GameObject/自定义/创建合包资源管理对象", false, MenuItemConfig.合包资源管理)]
+        private static void CreateSoundManagerObject()
+        {
+            GameObject gameObject = new GameObject("合包资源管理");
+            gameObject.AddComponent<MyResources>();
+            EditorUtility.FocusProjectWindow();
+            Selection.activeObject = gameObject;
+            EditorGUIUtility.PingObject(Selection.activeObject);
+            Undo.RegisterCreatedObjectUndo(gameObject, "Create GameObject");
+            EditorSceneManager.MarkSceneDirty(EditorSceneManager.GetActiveScene());
+            //GameObject obj = Instantiate(AssetDatabase.LoadAssetAtPath<GameObject>("Assets/_Common/Prefabs/Sound/声音管理.prefab")).name = "声音管理";
+        }
+
     }
 }
