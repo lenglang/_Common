@@ -1,17 +1,15 @@
 ﻿using UnityEngine;
 using WZK;
 
-public class MyResources:Singleton<MyResources>
+public class MyResources:WZK.Singleton<MyResources>
 {
-    private void Start()
-    {
-        DontDestroyOnLoad(gameObject);
-    }
     public ResourcesScriptableObject _resourcesScriptableObject;
     public T Load<T>(string path) where T : Object
     {
-        path = "Assets/Resources/" + path;
-        Debug.Log(path);
-        return (T)_resourcesScriptableObject.GetObject(path);
+        Debug.Log("--------"+path);
+        return Resources.Load<T>(path);
+        //path = "Assets/Resources/" + path;
+        //Debug.Log(path);
+        //return (T)_resourcesScriptableObject.GetObject(path);
     }
 }
