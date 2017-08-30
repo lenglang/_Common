@@ -73,7 +73,8 @@ namespace WZK
             }
             if (Event.current.type == EventType.DragExited)
             {
-                if (DragAndDrop.objectReferences[0].GetType() == typeof(AudioClip)|| DragAndDrop.objectReferences[0].GetType() == typeof(GameObject))
+                Debug.Log(DragAndDrop.objectReferences[0].GetType());
+                if (DragAndDrop.objectReferences[0].GetType() == typeof(Texture2D) ||DragAndDrop.objectReferences[0].GetType() == typeof(AudioClip)|| DragAndDrop.objectReferences[0].GetType() == typeof(GameObject))
                 {
                     AddObject(objList,DragAndDrop.objectReferences[0], DragAndDrop.paths[0]);
                 }
@@ -115,6 +116,7 @@ namespace WZK
         /// </summary>
         private void AddObject(List<ResourcesScriptableObject.Config> objList, Object obj, string assetPath)
         {
+            Debug.Log(obj.GetType());
             _isExist = false;
             for (int i = 0; i < objList.Count; i++)
             {
