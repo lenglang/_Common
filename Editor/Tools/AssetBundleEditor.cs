@@ -10,18 +10,30 @@ namespace WZK
     public class AssetBundleEditor : Editor
     {
 
-        [MenuItem("AssetBundle/打包选中文件为一个AssetBundle(可多选)")]
-        static void BuildAssetBundle()
+        [MenuItem("AssetBundle/打包选中文件为一个AssetBundle(可多选)-压缩")]
+
+        static void BulidCompressedAssetBundle()
+        {
+            BuildAssetBundle();
+        }
+        [MenuItem("AssetBundle/打包选中文件为一个AssetBundle(可多选)-不压缩")]
+        static void BulidUncompressedAssetBundle()
+        {
+            BuildAssetBundle(false);
+        }
+        static void BuildAssetBundle(bool IscompressedAssetBundle=true)
         {
             if (Selection.objects.Length == 0)
                 return;
             for (int i = 0; i < Selection.objects.Length; i++)
             {
-                Build(Selection.objects[i]);
+                Build(Selection.objects[i], IscompressedAssetBundle);
             }
             Debug.LogError("共打包" + Selection.objects.Length + "个AssetBundle");
         }
-        static void Build(Object obj)
+
+
+        static void Build(Object obj, bool IscompressedAssetBundle=true)
         {
             AssetBundleBuild assetBundleBuild = new AssetBundleBuild();
             assetBundleBuild = new AssetBundleBuild();
@@ -39,11 +51,13 @@ namespace WZK
             if (!Directory.Exists(directoryName))
                 Directory.CreateDirectory(directoryName);
 #if UNITY_ANDROID
-            BuildPipelineHelper.BuildAssetBundles(directoryName, new AssetBundleBuild[] { assetBundleBuild }, BuildAssetBundleOptions.None, BuildTarget.Android);
+            if(IscompressedAssetBundle){BuildPipelineHelper.BuildAssetBundles(directoryName, new AssetBundleBuild[] { assetBundleBuild }, BuildAssetBundleOptions.None, BuildTarget.Android);}
+            else{BuildPipelineHelper.BuildAssetBundles(directoryName, new AssetBundleBuild[] { assetBundleBuild }, BuildAssetBundleOptions.UncompressedAssetBundle, BuildTarget.Android);}
 #endif
 
 #if UNITY_IOS
-        BuildPipelineHelper.BuildAssetBundles(directoryName, new AssetBundleBuild[] {assetBundleBuild}, BuildAssetBundleOptions.None, BuildTarget.iOS);
+            if (IscompressedAssetBundle) { BuildPipelineHelper.BuildAssetBundles(directoryName, new AssetBundleBuild[] { assetBundleBuild }, BuildAssetBundleOptions.None, BuildTarget.iOS); }
+            else { BuildPipelineHelper.BuildAssetBundles(directoryName, new AssetBundleBuild[] { assetBundleBuild }, BuildAssetBundleOptions.UncompressedAssetBundle, BuildTarget.iOS); }
 #endif
         }
     }

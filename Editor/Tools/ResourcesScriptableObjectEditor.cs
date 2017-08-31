@@ -118,17 +118,18 @@ namespace WZK
         {
             Debug.Log(obj.GetType());
             _isExist = false;
+            assetPath = assetPath.Substring(0, assetPath.IndexOf("."));
+            assetPath = assetPath.Replace("\\", "/");
             for (int i = 0; i < objList.Count; i++)
             {
                 if (objList[i]._object == obj)
                 {
                     _isExist = true;
+                    objList[i]._assetPath = assetPath;
                     Debug.LogError("配置表里已存在该对象");
                     break;
                 }
             }
-            assetPath = assetPath.Substring(0, assetPath.IndexOf("."));
-            assetPath=assetPath.Replace("\\","/");
             if (_isExist == false) objList.Add(new ResourcesScriptableObject.Config(obj, assetPath));
         }
 

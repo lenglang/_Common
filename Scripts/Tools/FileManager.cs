@@ -62,7 +62,7 @@ namespace WZK
                 return;
 #if UNITY_IOS
         //下载的AssetBundle需设置
-        ThreadHelper.QueueOnMainThread(delegate ()
+        ThreadHelper.Instance.QueueOnMainThread(delegate ()
         {
             Device.SetNoBackupFlag(path);
         });
